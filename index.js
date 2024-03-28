@@ -28,6 +28,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         const allproductsCollection = client.db('E-commerce').collection('allproducts')
         const addTocartCollection = client.db('E-commerce').collection('addCart')
+        const wishlistCollection = client.db('E-commerce').collection('wishlist')
 
 
         // Get allproducts
@@ -46,6 +47,13 @@ async function run() {
             const addcart = req.body;
             const result = await addTocartCollection.insertOne(addcart);
             res.send(result);
+        })
+        // Get BOOKING params
+        app.get('/addcart/:email', async (req, res) => {
+            const email = req.params.email;
+            const fiterrr = { email: email }
+            const result = await addTocartCollection.find(fiterrr).toArray();
+            res.send(result)
         })
 
         // await client.connect();
