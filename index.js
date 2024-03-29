@@ -28,7 +28,7 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         const allproductsCollection = client.db('E-commerce').collection('allproducts')
         const addTocartCollection = client.db('E-commerce').collection('addCart')
-        const wishlistCollection = client.db('E-commerce').collection('wishlist')
+        const addWishlistCollection = client.db('E-commerce').collection('wishlist')
 
 
         // Get allproducts
@@ -48,11 +48,30 @@ async function run() {
             const result = await addTocartCollection.insertOne(addcart);
             res.send(result);
         })
-        // Get BOOKING params
+        // Get cart params
         app.get('/addcart/:email', async (req, res) => {
             const email = req.params.email;
             const fiterrr = { email: email }
             const result = await addTocartCollection.find(fiterrr).toArray();
+            res.send(result)
+        })
+        // single BOOKING delete
+        app.delete('/addcart/:id', async (req, res) => {
+            const id = req.params.id
+            const finddelete = await addTocartCollection.deleteOne({ _id: new ObjectId(id) })
+            res.send(finddelete)
+        })
+        // wishlist post
+        app.post('/wishlist', async (req, res) => {
+            const addwishlist = req.body;
+            const result = await addWishlistCollection.insertOne(addwishlist);
+            res.send(result);
+        })
+        // Get wishlist params
+        app.get('/wishlist/:email', async (req, res) => {
+            const email = req.params.email;
+            const fiter = { email: email }
+            const result = await addWishlistCollection.find(fiter).toArray();
             res.send(result)
         })
 
