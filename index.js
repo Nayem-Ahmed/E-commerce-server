@@ -33,7 +33,14 @@ async function run() {
 
         // Get allproducts
         app.get('/allproducts', async (req, res) => {
-            const result = await allproductsCollection.find().toArray()
+            const filter = req.query;
+            const query = {};
+            const option = {
+                sort: {
+                    new_price: filter.sort === 'priceLowToHigh' ? 1 : -1
+                }
+            }
+            const result = await allproductsCollection.find(query, option).toArray()
             res.send(result)
         })
         // Get single products
