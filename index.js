@@ -3,6 +3,10 @@ const cors = require('cors')
 require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 5000
+// This is a public sample test API key.
+// Don’t submit any personally identifiable information in requests made with this key.
+// Sign in to see your own test API key embedded in code samples.
+const stripe = require("stripe")(process.env.stripe_sk);
 
 app.use(cors({
     origin: ['http://localhost:5173', 'http://localhost:5174'],
@@ -80,6 +84,24 @@ async function run() {
             const fiter = { email: email }
             const result = await addWishlistCollection.find(fiter).toArray();
             res.send(result)
+        })
+        // ------------------payment--------------------
+        app.post("/create-payment-intent", async (req, res) => {
+            const { price } = req.body;
+
+            // Create a PaymentIntent with the order amount and currency
+            const amount = parseInt(price * 100);
+            console.log(amount,price);
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: "usd",
+                payment_method_types: ["card"],
+            });
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+              });
+
         })
 
         // await client.connect();
