@@ -33,6 +33,7 @@ async function run() {
         const allproductsCollection = client.db('E-commerce').collection('allproducts')
         const addTocartCollection = client.db('E-commerce').collection('addCart')
         const addWishlistCollection = client.db('E-commerce').collection('wishlist')
+        const paymenthistoryCollection = client.db('E-commerce').collection('paymentHistory')
 
 
         // Get allproducts
@@ -91,8 +92,6 @@ async function run() {
 
             // Create a PaymentIntent with the order amount and currency
             const amount = parseInt(price * 100);
-            console.log(amount,price);
-
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
                 currency: "usd",
@@ -100,9 +99,16 @@ async function run() {
             });
             res.send({
                 clientSecret: paymentIntent.client_secret,
-              });
+            });
 
         })
+        // save payment history
+        app.post('/payment_history', async (req, res) => {
+            const history = req.body;
+            const result = await paymenthistoryCollection.insertOne(history);
+            res.send(result);
+        })
+
 
         // await client.connect();
         // Send a ping to confirm a successful connection
