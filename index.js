@@ -102,12 +102,29 @@ async function run() {
             });
 
         })
-        // save payment history
+        // // save payment history
+        // app.post('/payment_history', async (req, res) => {
+        //     const history = req.body;
+        //     const result = await paymenthistoryCollection.insertOne(history);
+        //     res.send(result);
+        // })
+
+        // Save payment history and delete cart items
         app.post('/payment_history', async (req, res) => {
             const history = req.body;
-            const result = await paymenthistoryCollection.insertOne(history);
-            res.send(result);
-        })
+            try {
+                // Insert payment history
+                const paymentResult = await paymenthistoryCollection.insertOne(history);
+
+                // Delete cart items associated with the user's email
+                const deleteResult = await addTocartCollection.deleteMany({ email: history.email });
+                res.send({ paymentResult, deleteResult });
+            } catch (error) {
+                console.error('Error saving payment history:', error);
+                res.status(500).send('Error saving payment history');
+            }
+        });
+
 
 
         // await client.connect();
