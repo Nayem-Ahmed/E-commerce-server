@@ -60,6 +60,29 @@ async function run() {
             const result = await addTocartCollection.insertOne(addcart);
             res.send(result);
         })
+        app.patch('/increment_quantity/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await addTocartCollection.findOneAndUpdate({ _id: new ObjectId(id) }, { $inc: { quantity: 1 } });
+            res.send(result);
+
+        })
+        // Route for decrementing quantity
+        app.patch('/decrement_quantity/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const result = await addTocartCollection.findOneAndUpdate(
+                    { _id: new ObjectId(id), quantity: { $gt: 0 } }, // Ensure quantity is greater than 0 before decrementing
+                    { $inc: { quantity: -1 } }
+                );
+                if (!result.value) {
+                    return res.status(404).send('Item not found or quantity already zero');
+                }
+                res.send(result.value);
+            } catch (error) {
+                console.error('Error decrementing quantity:', error);
+                res.status(500).send('Internal server error');
+            }
+        });
         // Get cart params
         app.get('/addcart/:email', async (req, res) => {
             const email = req.params.email;
@@ -124,7 +147,13 @@ async function run() {
                 res.status(500).send('Error saving payment history');
             }
         });
-
+        // get payment history
+        app.get('/payment_history/:email', async (req, res) => {
+            const email = req.params.email;
+            const fiter = { email: email }
+            const result = await paymenthistoryCollection.find(fiter).toArray();
+            res.send(result)
+        })
 
 
         // await client.connect();
