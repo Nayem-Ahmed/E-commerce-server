@@ -40,6 +40,7 @@ async function run() {
         app.get('/allproducts', async (req, res) => {
             const filter = req.query;
             const query = {};
+            console.log(filter);
             const option = {
                 sort: {
                     new_price: filter.sort === 'priceLowToHigh' ? 1 : -1
