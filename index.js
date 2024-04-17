@@ -46,6 +46,12 @@ async function run() {
                     new_price: filter.sort === 'priceLowToHigh' ? 1 : -1
                 }
             }
+            // Apply search criteria if provided
+            // if (filter.search) {
+            //     query.$or = [
+            //         { name: { $regex: filter.search, $options: 'i' } },
+            //      ];
+            // }
             const result = await allproductsCollection.find(query, option).toArray()
             res.send(result)
         })
