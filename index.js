@@ -9,8 +9,8 @@ const port = process.env.PORT || 5000
 const stripe = require("stripe")(process.env.stripe_sk);
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
     credentials: true,
+    origin: ['http://localhost:5173', 'https://ecommerce-server-gamma.vercel.app'],
 }));
 app.use(express.json());
 
